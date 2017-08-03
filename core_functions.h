@@ -56,4 +56,5 @@ void output_values(ofstream &out);
 void core_calculate(ifstream* ifstream_array, vector<queue<string>> &buffer_queue, ofstream &output_file);
 void calculate_preprocess(const vector<string> &infilename, string &outfilename);
 void test();
+void constrains(string &infilename, string &outfilename);
 #endif /* CORE_FUNCTIONS_H_ */

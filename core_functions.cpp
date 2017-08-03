@@ -532,3 +532,130 @@ void test()
 	calculate_values_omp(params.end_condition, params.thread);
 	//cout << "55580488 finish " << endl << endl;
 }
+
+void constrains(string &infilename, string &outfilename)
+{
+	ifstream input_file(infilename, ifstream::in);
+	if (!input_file)
+	{
+		cerr << "Open infile error: " << infilename << endl;
+		exit(0);
+	}
+
+	ofstream output_file(outfilename, ios::out);
+	if (!output_file)
+	{
+		cerr << "Open outfile error : " << outfilename << endl;
+		exit(0);
+	}
+
+	int counter = 0;
+
+	string line;
+	while (getline(input_file, line))
+	{
+		stringstream strin(line);
+		string ss;
+		string gene;
+		string pos;
+		string ref;
+		string cov;
+		string ref_str;
+		string q_str1;
+		string q_str2;
+
+		vector<string> ref_vec(params.sample_count, "*");
+		vector<int> cov_vec(params.sample_count, 0);
+
+		Multi_Seq_Obj* mso = new Multi_Seq_Obj(params.sample_count, params.type);
+
+		strin >> gene;
+		strin >> pos;
+		strin >> ref;
+		//cout << line << endl;
+		//cout << gene << "\t" << pos << "\t" << ref << endl;
+		if (ref == "N")
+		{
+			continue;
+		}
+		try
+		{
+			for (int i = 0; i < params.sample_count; i++) 
+			{
+				strin >> cov;
+				if (0 == stoi(cov))
+				{
+					strin >> ref_str;
+					if (ref_str == "*")
+					{
+						strin >> q_str1;
+					}
+					continue;
+				}
+				else
+				{
+					strin >> ref_str;
+					strin >> q_str1;
+					strin >> q_str2;
+					if (q_str1.size() != q_str2.size()) continue;
+				}
+
+				shared_ptr<Seq_Obj> seq_obj(new Seq_Obj(gene, stoi(pos), ref, stoi(cov), ref_str, q_str1, q_str2, params.type, params.step, params.end_condition));
+
+				if (seq_obj.get()->Seq_Init_Filter() == 1) continue;
+
+				ref_vec[i] = seq_obj.get()->Get_Ref_Info();
+				cov_vec[i] = seq_obj.get()->Get_Ref_Length();
+
+				if ((seq_obj.get()->Get_Ratio_nchar() >= params.ratio_nchar)&&(seq_obj.get()->Get_Ratio_del() < params.ratio_del))
+				{
+					seq_obj.get()->Seq_Qual_Filter(params.bp, params.mp);
+					seq_obj.get()->Seq_Max_Filter(params.max_count);
+					mso->Insert(seq_obj, i);
+					mso->Enable();
+				} 
+			}
+			
+			if (mso->Get_Is_Qual())
+			{
+				counter++;
+				mso->Calc_EM(params.end_condition, params.step, params.eps);
+				mso->Calc_W(2, 200);
+
+				if ((mso->Get_W() >= 0) && (mso->Get_W() < params.result_filter))
+				{
+					//output_file << mso->Get_W() << "\t" << line << endl;
+					//output_file << line.find_last_of("|") 
+					//			<< "\t"
+					//			<< line.find_last_of("|", line.find_last_of("|") - 1) 
+					//			<< "\t"
+					int epos = gene.find_last_of("|") - 1;
+					int spos = gene.find_last_of("|", epos);
+					output_file << gene.substr(spos + 1, epos - spos) << "\t" << pos << "\t" << ref << "\t" << cov_vec[0];
+
+					for (int i = 1; i < params.sample_count; i++)
+					{
+						output_file << "," << cov_vec[i];
+					}
+
+					output_file << "\t" << ref_vec[0];
+
+					for (int i = 1; i < params.sample_count; i++)
+					{
+						output_file << "|" << ref_vec[i];
+					}
+					
+					output_file << endl;
+				}
+			}
+		} catch (std::invalid_argument)
+		{
+			//cerr << line << endl;
+		}
+
+		delete mso;
+	}
+	//cout << "counter = " << counter << endl;
+	input_file.close();
+	output_file.close();
+}

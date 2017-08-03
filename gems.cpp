@@ -14,19 +14,19 @@ int main(int argc, char * argv[])
     vector<string> infilename;
 
     //Parameters params;
-    params.sample_count = 0;
+    params.sample_count = 3;
     params.type = 3; //polidy
     params.max_count = 255;//Max allele count
     params.thread = 1;
-    params.ratio_nchar = 0.2;
-    params.ratio_del = 0.05;
+    params.ratio_nchar = 0.1;
+    params.ratio_del = 0.5;
     
     params.step = 0.01;//Steps
     params.eps = 0.001;
     params.p_snp = 0.1;
     
     //lFDR output filter with a default of 0.1.  In this way, only sites with an estimated lFDR less than 0.1 should be provided in the final output.  If a user decides to output all analyzed sites, he can change this parameter setting to 1
-    params.result_filter = 0.1;
+    params.result_filter = 0.6;
     params.one_circle_limit = 200;
     params.end_condition = 0.5;
 
@@ -104,6 +104,9 @@ int main(int argc, char * argv[])
                             case 'C':
                                 params.one_circle_limit = stoi(argv[option_pos]);
                                 break;
+                            case 'S':
+                                params.sample_count = stoi(argv[option_pos]);
+                                break;
                             default :
                             	cerr<<"Unrec argument: " << argv[arg_pos] << endl;
                             	printhelp();
@@ -114,7 +117,7 @@ int main(int argc, char * argv[])
     
     params.result_filter = (params.result_filter < 0.0) ? 0.0 : ((params.result_filter > 1.0) ? 1.0 : params.result_filter);
     
-    params.sample_count = Get_Name_List(listname.c_str(), infilename);
+    //params.sample_count = Get_Name_List(listname.c_str(), infilename);
 
     if (params.sample_count == 0)
     {
@@ -128,7 +131,8 @@ int main(int argc, char * argv[])
     	exit(0);
     }
 
-    calculate_preprocess(infilename, outfilename);
+    //calculate_preprocess(infilename, outfilename);
+    constrains(listname, outfilename);
 
     return 0;
 }
