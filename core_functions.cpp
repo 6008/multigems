@@ -597,6 +597,8 @@ void constrains(string &infilename, string &outfilename)
 					strin >> ref_str;
 					strin >> q_str1;
 					strin >> q_str2;
+					cov_vec[i] = stoi(cov);
+					ref_vec[i] = ref_str;
 					if (q_str1.size() != q_str2.size()) continue;
 				}
 
@@ -604,8 +606,8 @@ void constrains(string &infilename, string &outfilename)
 
 				if (seq_obj.get()->Seq_Init_Filter() == 1) continue;
 
-				ref_vec[i] = seq_obj.get()->Get_Ref_Info();
-				cov_vec[i] = seq_obj.get()->Get_Ref_Length();
+				//ref_vec[i] = seq_obj.get()->Get_Ref_Info();
+				//cov_vec[i] = seq_obj.get()->Get_Ref_Length();
 
 				if ((seq_obj.get()->Get_Ratio_nchar() >= params.ratio_nchar)&&(seq_obj.get()->Get_Ratio_del() < params.ratio_del))
 				{
