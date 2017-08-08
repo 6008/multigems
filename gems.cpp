@@ -26,7 +26,7 @@ int main(int argc, char * argv[])
     params.p_snp = 0.1;
     
     //lFDR output filter with a default of 0.1.  In this way, only sites with an estimated lFDR less than 0.1 should be provided in the final output.  If a user decides to output all analyzed sites, he can change this parameter setting to 1
-    params.result_filter = 0.6;
+    params.result_filter = 0.5;
     params.one_circle_limit = 200;
     params.end_condition = 0.5;
 

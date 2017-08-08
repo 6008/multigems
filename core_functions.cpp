@@ -615,16 +615,25 @@ void constrains(string &infilename, string &outfilename)
 					seq_obj.get()->Seq_Max_Filter(params.max_count);
 					mso->Insert(seq_obj, i);
 					mso->Enable();
-				} 
+				}
+			}
+
+			int cov_sum = 0;
+			int cov_num = 0;
+			for (int i = 0; i < params.sample_count; i++) {
+				if (cov_vec[i] > 0) {
+					cov_num++;
+					cov_sum += cov_vec[i];
+				}
 			}
 			
-			if (mso->Get_Is_Qual())
+			if ((mso->Get_Is_Qual()) && (cov_sum > cov_num * 10))
 			{
 				counter++;
 				mso->Calc_EM(params.end_condition, params.step, params.eps);
 				mso->Calc_W(2, 200);
 
-				if ((mso->Get_W() >= 0) && (mso->Get_W() < params.result_filter))
+				if ((mso->Get_W() > 0.1) && (mso->Get_W() < params.result_filter))
 				{
 					//output_file << mso->Get_W() << "\t" << line << endl;
 					//output_file << line.find_last_of("|") 

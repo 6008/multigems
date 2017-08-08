@@ -1493,9 +1493,9 @@ def fit_strains(options, samples):
 		if os.path.exists(model_file) or (not os.path.exists(snp_file)): continue
 		try:SNPs = cPickle.load(open(snp_file, 'rb'))
 		except: sys.stderr.write('  [WARNING]: Error in detecting SNPs for %s. Skipping...\n' % species)		
-		if len(SNPs) < 10:
+		if len(SNPs) < 20:
 			sys.stderr.write('  [WARNING]: There are only %i informative SNPs detected for %s.\n' % (len(SNPs), species))
-			sys.stderr.write('             You need 10 or more SNPs to confidently infer strains. Skipping...\n')
+			sys.stderr.write('             You need 20 or more SNPs to confidently infer strains. Skipping...\n')
 			continue
 		cmd = [species, sp_cov, SNPs, ref_seqs[species], options]
 		species_SNPs_num[species] = len(SNPs)
@@ -1798,7 +1798,7 @@ def fit_snpflow(args):
 			for (x1, y1), (x2, y2) in zip(RSSs[:-1], RSSs[1:]):
 				delta = (y1 - y2)/y1
 				print delta
-				if delta <= 0.05:  # if less than 5% improvement 
+				if delta <= 0.1:  # if less than 5% improvement 
 					optimal_numStrains = x1
 					break
 				else: optimal_numStrains = x2
