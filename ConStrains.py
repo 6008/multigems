@@ -2126,9 +2126,10 @@ def output_results(samples, options):
 			unresolved_sp[species] = 1
 			continue
 		SNPs = cPickle.load(open(snp_file, 'rb'))
-		if len(SNPs) < 10:
+		if len(SNPs) < 20:
 			sp_intra_profile[species] = [1.0]*len(samples)
 			sp_overall_profile[species] = rel_ab[species]
+			unresolved_sp[species] = 1
 			continue
 		if not os.path.exists(solution_file):
 			unresolved_sp[species] = 1
