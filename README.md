@@ -64,6 +64,8 @@ multigems -i pileuplist.txt -o multigems.out [OPTIONS]
 -l FLOAT sample deletion placeholder proportion filter (samples with pileup 
          deletion placeholder proportions greater than filter are not 
          analyzed), between 0 and 1, default is 0.05 
+         
+-S Special parameter for GeMStrain
 
 ##Output
 
